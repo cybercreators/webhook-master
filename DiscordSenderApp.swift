@@ -150,12 +150,20 @@ class WebhookManager: ObservableObject {
 }
 
 // MARK: - Models
-struct WebhookItem: Identifiable {
+struct WebhookItem: Identifiable, Hashable {
     let id: UUID
     var label: String
     var url: String
     var isActive: Bool
     var lastUsed: Date?
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    static func == (lhs: WebhookItem, rhs: WebhookItem) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 struct MessageTemplate: Identifiable {
