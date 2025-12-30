@@ -1,0 +1,41 @@
+workflows:
+  ios-unsigned-ipa:
+    name: iOS Unsigned IPA Build
+    instance_type: mac_mini_m1
+    max_build_duration: 60
+    
+    environment:
+      vars:
+        XCODE_PROJECT: "DiscordSender.xcodeproj"
+        XCODE_SCHEME: "DiscordSender"
+
+    scripts:
+      - name: Build Unsigned iOS App
+        script: |
+          # Build for a real device but skip signing
+          xcodebuild build \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+            
+      - name: Package into Unsigned IPA
+        script: |
+          # Create the Payload directory structure required for an .ipa
+          mkdir -p Payload
+          cp -r build/Build/Products/Release-iphoneos/DiscordSender.app Payload/
+          
+          # Zip the Payload folder and rename to .ipa
+          zip -r DiscordSender_Unsigned.ipa Payload
+          
+    artifacts:
+      - "*.ipa"
+      
+    publishing:
+      email:
+        recipients:
+          - user@example.com
