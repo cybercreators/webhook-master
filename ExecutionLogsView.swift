@@ -1,5 +1,12 @@
 import SwiftUI
 
+func formatDate(_ date: Date) -> String {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .short
+    formatter.timeStyle = .short
+    return formatter.string(from: date)
+}
+
 struct ExecutionLogsView: View {
     @ObservedObject var webhookManager: WebhookManager
     
@@ -37,7 +44,7 @@ struct LogEntry: View {
                     Text(log.webhookLabel)
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
-                    Text(log.timestamp.formatted(date: .abbreviated, time: .standard))
+                    Text(formatDate(log.timestamp))
                         .font(.system(size: 12))
                         .foregroundColor(.gray)
                 }
